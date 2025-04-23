@@ -1,0 +1,2 @@
+hello : '{IO, Exception} ()
+hello _ = printLine "Hello, Unison!"
