@@ -1,2 +1,8 @@
 hello : '{IO, Exception} ()
 hello _ = printLine "Hello, Unison!"
+
+greeting : '{IO, Exception} ()
+greeting _ =
+  printLine "Enter your name: "
+  input = readLine()
+  printLine ("Hello, " ++ input)
