@@ -1,0 +1,33 @@
+-- Following the language fundamentals: https://www.unison-lang.org/docs/fundamentals/values-and-functions/terms/
+
+-- Terms --
+fullName : Text
+fullName = "Gabriel Volpe"
+
+tuple : (Text, Text, Nat)
+tuple = ("Nikola", "Tesla", 86)
+
+> at1 tuple
+
+getByteSize : (Text, Text, Nat) -> Nat
+getByteSize tuple3 =
+  _ = "tuple decomposition 👇"
+  let
+    (first, last, age) = tuple3
+    Bytes.size (toUtf8 first ++ toUtf8 last ++ toBytesBigEndian age)
+
+> getByteSize tuple
+
+myPi : Float
+myPi = 3.141592653589793
+
+degrees : Int
+degrees = -4
+
+> degrees
+
+-- Collections --
+
+-- Functions --
+
+-- Reading type signatures --

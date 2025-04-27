@@ -11,6 +11,6 @@ greeting : '{IO, Exception} ()
 greeting _ =
   printLine "Enter your name: "
   input = readLine()
-  printLine ("Hello, " ++ input)
+  printLine ("Hello, " ++ input ++ "!")
 
 LICENSE = License [copyrightHolders.gvolpe] [Year 2025] bsd3
