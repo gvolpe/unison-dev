@@ -1,3 +1,9 @@
+README = {{
+  # Hello
+
+  This is a simple Unison project.
+}}
+
 hello : '{IO, Exception} ()
 hello _ = printLine "Hello, Unison!"
 
@@ -6,3 +12,5 @@ greeting _ =
   printLine "Enter your name: "
   input = readLine()
   printLine ("Hello, " ++ input)
+
+LICENSE = License [copyrightHolders.gvolpe] [Year 2025] bsd3

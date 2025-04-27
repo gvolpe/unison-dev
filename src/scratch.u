@@ -28,3 +28,5 @@ test> square.tests.prop1 =
      a = Random.natIn 0 100
      b = Random.natIn 0 100
      ensure (square a * square b == square (a * b))
+
+LICENSE = License [copyrightHolders.gvolpe] [Year 2025] bsd3
