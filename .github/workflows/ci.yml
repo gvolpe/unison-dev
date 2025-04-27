@@ -1,0 +1,27 @@
+name: Nix
+
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Install Nix ❄️"
+        uses: cachix/install-nix-action@v31.2.0
+
+      - name: "Install Cachix ❄️"
+        uses: cachix/cachix-action@v16
+        with:
+          name: unison-dev
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: "Nix flake check ❄️"
+        run: nix flake check -L
