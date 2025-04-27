@@ -1,0 +1,30 @@
+README = {{
+  # Unison Tour
+
+  Following the [Unison Tour](https://www.unison-lang.org/docs/tour/) documentation.
+}}
+
+square : Nat -> Nat
+square x =
+  use Nat *
+  x * x
+
+plus10 : Nat -> Nat
+plus10 x = x + 10
+
+> plus10 5
+> square 5
+> sum [1,2,3,4]
+
+test> plus10.tests.ex1 =
+ verify '(ensureEqual (plus10 4) 14)
+
+test> square.tests.ex1 =
+ verify '(ensureEqual (square 4) 16)
+
+test> square.tests.prop1 =
+   verify do
+     Each.repeat 100
+     a = Random.natIn 0 100
+     b = Random.natIn 0 100
+     ensure (square a * square b == square (a * b))
