@@ -1,0 +1,355 @@
+-- Following the language fundamentals: https://www.unison-lang.org/docs/#language-fundamentals
+
+-- ########### Terms ############ --
+terms.fullName : Text
+terms.fullName = "Gabriel Volpe"
+
+terms.tuple : (Text, Text, Nat)
+terms.tuple = ("Nikola", "Tesla", 86)
+
+-- > at1 terms.tuple
+
+terms.getByteSize : (Text, Text, Nat) -> Nat
+terms.getByteSize tuple3 =
+  _ = "tuple decomposition 👇"
+  let
+    (first, last, age) = tuple3
+    Bytes.size (toUtf8 first ++ toUtf8 last ++ toBytesBigEndian age)
+
+-- > terms.getByteSize tuple
+
+terms.myPi : Float
+terms.myPi = 3.141592653589793
+
+terms.degrees : Int
+terms.degrees = -4
+
+-- > terms.degrees
+
+-- ########### Collections ############ --
+
+collections.desserts : [Text]
+collections.desserts = [ "Tiramisu", "Cheesecake", "Lemon Pie"]
+
+collections.emptyList : [Int]
+collections.emptyList = List.empty -- or []
+
+-- > List.head collections.emptyList
+-- > List.head collections.desserts
+-- > List.filter (Text.contains "e") collections.desserts
+
+collections.singletonMap : Map Nat Text
+collections.singletonMap = Map.singleton 1 "foo"
+
+-- > collections.singletonMap
+
+collections.populatedMap : Map Text Text
+collections.populatedMap = Map.fromList [("a", "Arnold"), ("s", "Sylvester")]
+
+collections.actorsMap : Map Text Text
+collections.actorsMap = Map.put "d" "Danny DeVito" collections.populatedMap
+
+collections.showActors : '{IO, Exception} ()
+collections.showActors = do
+  Map.foreach collections.actorsMap (k v -> printLine ("k: " ++ k ++ ", v: " ++ v))
+
+-- > collections.showActors
+
+collections.fruits : Set Text
+collections.fruits = Set.fromList ["🍎", "🍎", "🍊", "🍐", "🍋", "🍊"]
+
+-- > collections.fruits |> Set.toList
+
+-- ########### Functions ############ --
+
+functions.addNums : Nat -> Nat -> Nat
+functions.addNums n1 n2 = n1 + n2
+
+functions.addOneCurried : Nat -> Nat
+functions.addOneCurried = functions.addNums 1
+
+-- > functions.addOneCurried 3
+
+functions.repeatNum : Nat -> Text
+functions.repeatNum num =
+  text = Nat.toText num
+  Text.repeat num text
+
+-- > functions.repeatNum 3
+
+functions.nesting : [Text]
+functions.nesting =
+  parent = "outer"
+  inner1 = let
+    child1 = "child1"
+    inner2 = let
+      child2 = "child2"
+      [parent, child1, child2]
+    inner2
+  inner1
+
+functions.debugging : Text
+functions.debugging =
+  Debug.trace "I am ok because I return unit!" ()
+  "returned value"
+
+functions.lambdaSyntax = List.map (x -> x + 1) (List.range 1 10)
+
+-- > functions.lambdaSyntax
+
+functions.multilineLambdaSyntax = 
+  List.map
+    (i -> let
+      use Nat +
+      x = i + 1
+      y = x + 1
+      z = y + 1
+      z) [1, 2, 3]
+
+-- > functions.multilineLambdaSyntax
+
+functions.lambdaDecomposition : [Nat]
+functions.lambdaDecomposition =
+  List.map (cases (a, b) -> a + b) [(1, 2), (3, 4)]
+
+-- > functions.lambdaDecomposition
+
+functions.sumList : [Nat] -> Nat
+functions.sumList = List.foldLeft (acc x -> acc + x) 0
+
+-- > functions.sumList (List.range 1 5)
+
+-- > List.map (_ -> 10) [1,2,3]
+
+-- ########### Reading type signatures ############ --
+
+-- > Function.id [1,2,3]
+
+-- The {𝕖} represents the set of abilities
+-- List.map : (a ->{𝕖} b) -> [a] ->{𝕖} [b]
+signatures.effects : '{IO, Exception} ()
+signatures.effects = do List.foreach (x -> printLine x) ["foo", "bar"]
+
+-- ########### Defining operators ############ --
+
+(tour.\/) a b = Nat.pow a b
+
+x tour.|+| y = x Nat.+ y
+
+-- > 2 tour.\/ 3
+-- > 2 tour.|+| 3
+
+-- ########### Operators for function application ############ --
+
+operators.composeEx : Nat -> Boolean
+operators.composeEx = Boolean.not << Nat.isEven
+
+-- > operators.composeEx 22
+
+operators.composeMultiEx : Text -> Boolean
+operators.composeMultiEx = operators.composeEx << Text.size
+
+-- > operators.composeMultiEx "Gabriel"
+
+operators.andThenEx : Text -> Boolean
+operators.andThenEx = Text.size >> Nat.isEven >> Boolean.not
+
+-- > operators.andThenEx "Boo"
+
+operators.pipeRightEx : Optional Nat
+operators.pipeRightEx =
+  Some 5
+    |> Optional.filter Nat.isEven
+    |> Optional.map (n -> n + 1)
+
+-- > operators.pipeRightEx
+
+operators.pipeBackwardsEx : Optional Nat
+operators.pipeBackwardsEx =
+  Optional.filter Nat.isEven <| Some 4
+
+-- > operators.pipeBackwardsEx
+
+-- ########### Delayed computations ############ --
+
+delayed.longText : 'Text -- same as () -> Text
+delayed.longText _ = "🐵 Imagine infinite monkeys on infinite typewriters 🙊…"
+
+-- > !delayed.longText -- same as delayed.longText()
+
+delayed.coinflip : Boolean -> 'Text
+delayed.coinflip bool = do if bool then delayed.longText() else "Hi"
+
+-- > delayed.coinflip true () -- same as !(delayed.coinflip true)
+
+-- ########### Pattern matching ############ --
+
+pattern.foodUnit : Text -> Text
+pattern.foodUnit f = match f with
+  "Pie"     -> "slice"
+  "Coffee"  -> "cup"
+  "Soup"    -> "bowl"
+  "Pancake" -> "stack"
+  _         -> "???"
+
+-- > pattern.foodUnit "Soup"
+
+pattern.magicNumber : Nat -> Text
+pattern.magicNumber guess = match guess with
+  42 -> "magic 🪄"
+  n -> toText n ++ " is not the magic number. Guess again."
+
+-- > pattern.magicNumber 4
+
+pattern.matchNum : Nat -> Text
+pattern.matchNum num = match num with
+  x | (x === 1) || (x === 2) -> "one or two"
+  y | (y === 3) || (y === 4) -> "three or four"
+  z | (z === 5) || (z === 6) -> "five or six"
+  n -> "no match for " ++ Nat.toText n
+
+-- > pattern.matchNum 43
+
+pattern.myMatch : Nat -> Text
+pattern.myMatch num = match num with
+  n
+    | n < 3 -> "small number"
+    | n > 100 -> "big number"
+    | otherwise -> "medium number"
+
+-- > pattern.myMatch 124
+
+pattern.matchNumCases : Nat -> Text
+pattern.matchNumCases = cases
+  x | (x === 1) || (x === 2) -> "one or two"
+  y | (y === 3) || (y === 4) -> "three or four"
+  z | (z === 5) || (z === 6) -> "five or six"
+  n -> "no match for " ++ Nat.toText n
+
+-- > pattern.matchNumCases 43
+
+type Lunch = Soup Text | Salad Text | Mystery Text Boolean
+type Utensil = Fork | Knife | Spoon | ChopSticks
+
+pattern.placeSetting : Lunch -> [Utensil]
+pattern.placeSetting = cases
+  Soup "Ramen" -> [Spoon, ChopSticks]
+  Soup _       -> [Spoon]
+  Salad _      -> [Fork, Knife]
+  Mystery _ _  -> [Spoon, Fork, Knife]
+
+-- > pattern.placeSetting (Soup "Ramen")
+
+pattern.eitherCases : Either Text Text -> Text
+pattern.eitherCases = cases
+  Either.Right x -> x
+  Either.Left x  -> x
+
+-- > pattern.eitherCases (Either.Left "foo")
+
+optional.cond : a -> Boolean -> Optional a
+optional.cond a = cases
+  true  -> Some a
+  false -> None
+
+type Hydra = Heads Nat Nat Nat Nat Nat
+
+pattern.slayHydra : Nat -> Hydra -> Optional Hydra
+pattern.slayHydra attack = cases
+  hydra@(Heads h1 h2 immortal h4 h5) ->
+    optional.cond hydra (attack != immortal)
+
+-- > pattern.slayHydra 4 (Heads 1 1 5 1 1)
+
+pattern.header : [a] -> Optional a
+pattern.header = cases
+  a +: _ -> Some a
+  _      -> None
+
+-- > pattern.header [1]
+
+pattern.destructList : [Text] -> Text
+pattern.destructList = cases
+  [fst, snd] ++ _ -> "1: " ++ fst ++ ", 2: " ++ snd
+  _               -> "fallback"
+
+-- > pattern.destructList ["foo", "bar", "asd"]
+
+-- ########### Looping ############ --
+
+looping.sum : [Nat] -> Nat
+looping.sum = cases
+   []      -> 0
+   x +: xs -> x + (looping.sum xs)
+
+-- > looping.sum [9,8,7,6]
+
+looping.effectful : Nat -> {Stream Nat} ()
+looping.effectful = cases
+  n
+    | n == 0    -> ()
+    | otherwise ->
+      emit n
+      looping.effectful (n - 1)
+ 
+-- > Stream.toList do looping.effectful 5 -- [5,4,3,2,1]
+
+-- ########### Error handling ############ --
+
+type failure.example1.DatabaseError =
+  DuplicateValuesForUniqueColumn
+  | NumericValueOutOfRange
+  | NonNullConstraintViolated
+
+type failure.example1.User = User Text
+
+-- typeLink is a literal to build a Failure's Type
+failure.example1 : Failure
+failure.example1 =
+  Failure
+    (typeLink DatabaseError)
+    "The username column already contains a value for entry: Bob"
+    (Any (User.User "Bob"))
+
+-- > failure.example1
+-- > Generic.failure "boom" ()
+
+-- ########### structural and unique data types ############ --
+
+-- same as 'unique type Pet'
+type Pet = Cat | Dog | Hamster
+
+structural type Weekday = Pon | Wto | Sro | Czw | Pia | Sob | Nie
+
+type Owner = Owner Text Nat (Set Pet)
+
+datatypes.ownerExample : Owner
+datatypes.ownerExample =
+  pets = Set.fromList [Cat, Dog]
+  Owner "Craig" 47 pets
+
+-- > datatypes.ownerExample
+
+type Person = Person Text Nat (Set Pet)
+
+datatypes.personFinder : Owner -> [(Owner, Person)]-> Optional Person
+datatypes.personFinder owner xs =
+  get owner (Map.fromList xs)
+
+structural type Maybe a = Just a | Nothing
+
+-- ########### record types ############ --
+
+unique type Album = {
+  title: Text,
+  sales: Nat,
+  releaseDate: Instant
+}
+
+records.albumEx1 =
+  releaseDate = getOrBug "boom" (Instant.fromIso8601 "2014-09-16T00:00:00Z")
+  Album "Language" 897 releaseDate
+
+-- > Album.sales.set 1500 records.albumEx1
+-- > Album.sales.modify (x -> x + 10) records.albumEx1
+-- > Album.releaseDate records.albumEx1
