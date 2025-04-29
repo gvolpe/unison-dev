@@ -1,0 +1,142 @@
+namespace com.gvolpe.microblog
+
+deploy : '{IO, Exception} URI
+deploy = Cloud.main do
+  serviceHash = deployHttp !env api.routes
+  serviceName = ServiceName.named "microblog"
+  ServiceName.assign serviceName serviceHash
+
+env : '{Exception, Cloud} Environment
+env = do Environment.named "default"
+
+-- ##################### API Routes ####################### --
+
+api.routes : HttpRequest ->{Exception, Log} HttpResponse
+api.routes =
+  use Route <|>
+  routes = (api.createPost
+    <|> api.getPostById
+    <|> api.createUser
+    <|> api.getUserPosts
+    <|> api.getUserFeedById
+    <|> api.getUserFeedByHandle)
+  Route.run routes
+
+api.createPost : '{Route, Exception, Log} ()
+api.createPost = do
+  userHandle = Route.route POST (s "api" / s "users" / Parser.text / s "posts")
+  body = request.body.decodeJson CreatePost.fromJson
+  warn "Creating new post" []
+  ok.json (PostId.toJson (BlogPostId "IAmAPostId"))
+
+api.getUserPosts : '{Route, Log} ()
+api.getUserPosts = do
+  userId = Route.route GET (s "api" / s "users" / Parser.text / s "posts")
+  info "Getting user posts for 👇" [("userId", userId)]
+  ok.json (Posts.toJson [Post.example])
+
+api.getPostById : '{Route, Exception, Log} ()
+api.getPostById = do
+  postId = BlogPostId (Route.route GET (s "api" / s "posts" / Parser.text))
+  info "Get post for 👇" [("id", PostId.value postId)]
+  ok.json (Post.toJson Post.example)
+
+api.createUser : '{Route, Exception, Log} ()
+api.createUser = do
+  Route.noCapture POST (s "api" / s "users")
+  body = request.body.decodeJson User.fromJson
+  info "Creating user with 👇" [("handle", User.userHandle body)]
+  ok.json (UserId.toJson <| UserId.UserId "some user id")
+
+api.getUserFeedById : '{Route, Log} ()
+api.getUserFeedById = do
+  userId = Route.route GET (s "api" / s"users" / Parser.text / s "feed")
+  info "Getting user feed for 👇" [("userId", userId)]
+  ok.json (Posts.toJson [Post.example])
+
+api.getUserFeedByHandle : '{Route, Log} ()
+api.getUserFeedByHandle = do
+  userHandle = Route.route GET (s "api" / s"users" / Parser.text / s "feed")
+  info "Getting user feed for 👇" [("handle", userHandle)]
+  ok.json (Posts.toJson [Post.example])
+
+-- ##################### JSON models ####################### --
+
+type User = {
+  userHandle: Text,
+  name: Text,
+  avatar: Optional Text
+}
+
+type Post = {
+  body: Text,
+  name : Text,
+  userHandle : Text,
+  timestamp: Text
+}
+
+type UserId = UserId Text
+type CreatePost = CreatePost Text
+type PostId = BlogPostId Text
+
+Post.example =
+  Post.Post
+    "blog post body"
+    "Ada Lovelace"
+    "@ada"
+    "2021-01-01T00:00:00Z"
+
+PostId.value : com.gvolpe.microblog.PostId -> Text
+PostId.value = cases
+    BlogPostId t -> t
+
+-- TODO: why do I need to indicate the full namespace again when we are in the namespace?
+User.toJson : com.gvolpe.microblog.User -> Json
+User.toJson = cases
+  User.User userHandle name avatar ->
+    maybeAvatar = Optional.map (uri -> ("avatar", Json.text uri)) avatar
+    jsonFields = [("userHandle", Json.text userHandle), ("name", Json.text name)]
+    optionalJsonFields = Optional.toList maybeAvatar
+    Json.object (jsonFields List.++ optionalJsonFields)
+
+UserId.toJson : com.gvolpe.microblog.UserId -> Json
+UserId.toJson = cases
+    UserId.UserId id -> Json.object [("userId", Json.text id)]
+
+User.fromJson : '{Decoder} com.gvolpe.microblog.User
+User.fromJson = do
+  userHandle = Decoder.object.at! "userHandle" Decoder.text
+  name = Decoder.object.at! "name" Decoder.text
+  avatar = Decoder.optional! (Decoder.object.at "avatar" Decoder.text)
+  User.User userHandle name avatar
+
+CreatePost.fromJson : '{Decoder} com.gvolpe.microblog.CreatePost
+CreatePost.fromJson = do
+    body = at! "body" text
+    CreatePost body
+
+PostId.toJson : com.gvolpe.microblog.PostId -> Json
+PostId.toJson = cases
+    BlogPostId id -> Json.object [("postId", Json.text id)]
+
+Post.toJson : com.gvolpe.microblog.Post -> Json
+Post.toJson = cases
+  Post.Post body name userHandle timestamp ->
+    Json.object [
+      ("body", Json.text body),
+      ("name", Json.text name),
+      ("userHandle", Json.text userHandle),
+      ("timestamp", Json.text timestamp)
+    ]
+
+Post.fromJson : '{Decoder} com.gvolpe.microblog.Post
+Post.fromJson = do
+  body = Decoder.object.at! "body" Decoder.text
+  name = Decoder.object.at! "name" Decoder.text
+  userHandle = Decoder.object.at! "userHandle" Decoder.text
+  timestamp = Decoder.object.at! "timestamp" Decoder.text
+  Post.Post body name userHandle timestamp
+
+Posts.toJson : [com.gvolpe.microblog.Post] -> Json
+Posts.toJson list =
+  List.map Post.toJson list |> Json.array
