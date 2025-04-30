@@ -1,0 +1,72 @@
+namespace com.gvolpe.miniblog.api
+
+type User = {
+  userHandle: Text,
+  name: Text,
+  avatar: Optional Text
+}
+
+type Post = {
+  body: Text,
+  name : Text,
+  userHandle : Text,
+  timestamp: Text
+}
+
+type UserId = UserId Text
+type CreatePost = CreatePost Text
+type PostId = BlogPostId Text
+
+PostId.value : api.PostId -> Text
+PostId.value = cases
+    BlogPostId t -> t
+
+User.toJson : User -> Json
+User.toJson = cases
+  User.User userHandle name avatar ->
+    maybeAvatar = Optional.map (uri -> ("avatar", Json.text uri)) avatar
+    jsonFields = [("userHandle", Json.text userHandle), ("name", Json.text name)]
+    optionalJsonFields = Optional.toList maybeAvatar
+    Json.object (jsonFields List.++ optionalJsonFields)
+
+UserId.toJson : api.UserId -> Json
+UserId.toJson = cases
+    UserId.UserId id -> Json.object [("userId", Json.text id)]
+
+User.fromJson : '{Decoder} User
+User.fromJson = do
+  userHandle = Decoder.object.at! "userHandle" Decoder.text
+  name = Decoder.object.at! "name" Decoder.text
+  avatar = Decoder.optional! (Decoder.object.at "avatar" Decoder.text)
+  User.User userHandle name avatar
+
+CreatePost.fromJson : '{Decoder} CreatePost
+CreatePost.fromJson = do
+    body = at! "body" text
+    CreatePost body
+
+PostId.toJson : api.PostId -> Json
+PostId.toJson = cases
+    BlogPostId id -> Json.object [("postId", Json.text id)]
+
+Post.toJson : Post -> Json
+Post.toJson = cases
+  Post.Post body name userHandle timestamp ->
+    Json.object [
+      ("body", Json.text body),
+      ("name", Json.text name),
+      ("userHandle", Json.text userHandle),
+      ("timestamp", Json.text timestamp)
+    ]
+
+Post.fromJson : '{Decoder} Post
+Post.fromJson = do
+  body = Decoder.object.at! "body" Decoder.text
+  name = Decoder.object.at! "name" Decoder.text
+  userHandle = Decoder.object.at! "userHandle" Decoder.text
+  timestamp = Decoder.object.at! "timestamp" Decoder.text
+  Post.Post body name userHandle timestamp
+
+Posts.toJson : [Post] -> Json
+Posts.toJson list =
+  List.map Post.toJson list |> Json.array

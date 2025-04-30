@@ -1,0 +1,52 @@
+namespace com.gvolpe.miniblog.db
+
+use com.gvolpe.miniblog.db.v2 PostId PostRow UserHandle UserName UserRow
+
+--userPostsTable: OrderedTable (UserHandle, OffsetDateTime) PostRow
+--userPostsTable = OrderedTable.named database "userPosts" Universal.ordering
+
+--getUserPosts =
+  --rangeClosed.prefix userPostsTable OrderedTable.prefixOrdering targetUser targetUser
+    -- |> Stream.toList
+
+type AppStorage = {
+    database : Database,
+    userHandleToUser : OrderedTable UserHandle UserRow,
+    userPostsTable : OrderedTable (UserHandle, OffsetDateTime) PostRow,
+    postsTable : OrderedTable PostId PostRow
+}
+
+createAppStorage : '{Exception, Cloud} AppStorage
+createAppStorage = do
+  db = Database.named "miniblog-v2"
+  Database.assign db env()
+  userHandleToUser = OrderedTable.named db "userHandleToUser-v2" Universal.ordering
+  userPostsTable = OrderedTable.named db "userPostsTable-v2" Universal.ordering
+  postsTable = OrderedTable.named db "postsTable-v2" Universal.ordering
+  AppStorage db userHandleToUser userPostsTable postsTable
+
+instantToOffsetDateTime : '{Remote} OffsetDateTime
+instantToOffsetDateTime = do
+  instantNow = time.now!
+  Instant.atOffset instantNow UTC
+
+createPost : AppStorage -> UserHandle -> Text ->{Exception, Storage, Random, Remote} PostRow
+createPost storage userHandle body =
+  postId = PostId.PostId Remote.UID.random()
+  timeStamp = !instantToOffsetDateTime
+  postTable = AppStorage.postsTable storage
+  userPostsTable = AppStorage.userPostsTable storage
+  transact (AppStorage.database storage) do
+    postRow = PostRow.PostRow postId timeStamp body userHandle
+    write.tx postTable postId postRow
+    write.tx userPostsTable (userHandle, timeStamp) postRow
+    postRow
+
+createUser : AppStorage -> UserHandle -> UserName -> Optional URI -> '{Exception, Storage, Random, Remote} ()
+createUser storage userHandle userName avatarURI = do
+  userId = UserId.UserId UUID.v4.new.asText
+  timeStamp = !instantToOffsetDateTime
+  OrderedTable.write
+    (AppStorage.userHandleToUser storage)
+    userHandle
+    (UserRow.UserRow userId userHandle userName avatarURI)

@@ -1,11 +1,11 @@
-# microblog
+# miniblog
 
 ## POST /api/users
 
 Create a new user, e.g.
 
 ```console
-curl -X POST https://gvolpe.unison-services.cloud/s/microblog/api/users \
+curl -X POST https://gvolpe.unison-services.cloud/s/miniblog/api/users \
   --header 'Content-Type: application/json' \
   --data '{"userHandle":"@gvolpe","name":"Gabriel Volpe","avatar":"https://avatars.githubusercontent.com/u/443978"}' | jq
 
@@ -17,7 +17,7 @@ curl -X POST https://gvolpe.unison-services.cloud/s/microblog/api/users \
 ## POST /api/users/{userId}/posts
 
 ```console
-curl -X POST https://gvolpe.unison-services.cloud/s/microblog/api/users/1234-4321/posts \
+curl -X POST https://gvolpe.unison-services.cloud/s/miniblog/api/users/1234-4321/posts \
   --header 'Content-Type: application/json' \
   --data '{"body":"this is a simple blogpost"}' | jq
 
@@ -29,7 +29,7 @@ curl -X POST https://gvolpe.unison-services.cloud/s/microblog/api/users/1234-432
 ## GET /api/users/{userId}/posts
 
 ```console
-$ curl -X GET https://gvolpe.unison-services.cloud/s/microblog/api/users/@gvolpe/posts | jq
+curl -X GET https://gvolpe.unison-services.cloud/s/miniblog/api/users/@gvolpe/posts | jq
 
 [
   {
@@ -44,7 +44,7 @@ $ curl -X GET https://gvolpe.unison-services.cloud/s/microblog/api/users/@gvolpe
 ## GET /api/users/{userId}/feed
 
 ```console
-$ curl -X GET https://gvolpe.unison-services.cloud/s/microblog/api/users/@gvolpe/feed | jq
+curl -X GET https://gvolpe.unison-services.cloud/s/miniblog/api/users/@gvolpe/feed | jq
 
 [
   {
