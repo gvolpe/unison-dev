@@ -14,10 +14,10 @@ curl -X POST https://gvolpe.unison-services.cloud/s/miniblog/api/users \
 }
 ```
 
-## POST /api/users/{userId}/posts
+## POST /api/users/{handle}/posts
 
 ```console
-curl -X POST https://gvolpe.unison-services.cloud/s/miniblog/api/users/1234-4321/posts \
+curl -X POST https://gvolpe.unison-services.cloud/s/miniblog/api/users/@gvolpe/posts \
   --header 'Content-Type: application/json' \
   --data '{"body":"this is a simple blogpost"}' | jq
 
@@ -26,25 +26,10 @@ curl -X POST https://gvolpe.unison-services.cloud/s/miniblog/api/users/1234-4321
 }
 ```
 
-## GET /api/users/{userId}/posts
+## GET /api/users/{handle}/posts
 
 ```console
 curl -X GET https://gvolpe.unison-services.cloud/s/miniblog/api/users/@gvolpe/posts | jq
-
-[
-  {
-    "body": "blog post body",
-    "name": "Ada Lovelace",
-    "userHandle": "@ada",
-    "timestamp": "2021-01-01T00:00:00Z"
-  }
-]
-```
-
-## GET /api/users/{userId}/feed
-
-```console
-curl -X GET https://gvolpe.unison-services.cloud/s/miniblog/api/users/@gvolpe/feed | jq
 
 [
   {
