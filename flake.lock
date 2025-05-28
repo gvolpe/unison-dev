@@ -174,7 +174,7 @@
         "hydra": "hydra",
         "iserv-proxy": "iserv-proxy",
         "nixpkgs": [
-          "unison-lang",
+          "unison-nix",
           "unison",
           "haskellNix",
           "nixpkgs-unstable"
@@ -360,7 +360,7 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "unison-lang",
+          "unison-nix",
           "nixpkgs"
         ]
       },
@@ -399,7 +399,7 @@
       "inputs": {
         "nix": "nix",
         "nixpkgs": [
-          "unison-lang",
+          "unison-nix",
           "unison",
           "haskellNix",
           "hydra",
@@ -685,7 +685,7 @@
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
-        "unison-lang": "unison-lang"
+        "unison-nix": "unison-nix"
       }
     },
     "stackage": {
@@ -722,12 +722,12 @@
     "unison": {
       "inputs": {
         "flake-utils": [
-          "unison-lang",
+          "unison-nix",
           "flake-utils"
         ],
         "haskellNix": "haskellNix",
         "nixpkgs-haskellNix": [
-          "unison-lang",
+          "unison-nix",
           "unison",
           "haskellNix",
           "nixpkgs-unstable"
@@ -735,21 +735,21 @@
         "nixpkgs-release": "nixpkgs-release"
       },
       "locked": {
-        "lastModified": 1743131295,
-        "narHash": "sha256-/aBYP+4pgjJGJHB8BZRexsDZbxaouuSSdG9Gl3M97aw=",
+        "lastModified": 1746719331,
+        "narHash": "sha256-1ieRTra+bLRyFSggms0v225j+NJR5ZV2tXNo6JJscxg=",
         "owner": "unisonweb",
         "repo": "unison",
-        "rev": "51d6d80ead4325a5d491a795a413b82d4af6d35a",
+        "rev": "468e355113bbad2f72d18ce27788f4323b0784b3",
         "type": "github"
       },
       "original": {
         "owner": "unisonweb",
-        "ref": "release/0.5.37",
+        "ref": "release/0.5.40",
         "repo": "unison",
         "type": "github"
       }
     },
-    "unison-lang": {
+    "unison-nix": {
       "inputs": {
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
@@ -759,11 +759,11 @@
         "unison": "unison"
       },
       "locked": {
-        "lastModified": 1745870460,
-        "narHash": "sha256-jV7yRWI1QyBt37Q7imkGpMvUgjrbX+An38rIOGmGCqM=",
+        "lastModified": 1747926854,
+        "narHash": "sha256-FGVfjxEUc2oyyloqC7WMs+a1e8W+qBNI9M1KwXmxyQI=",
         "owner": "ceedubs",
         "repo": "unison-nix",
-        "rev": "8742b53e4bb03cde93ab8af16937dd67f65dd186",
+        "rev": "6cb941ba5cc703716c4e80176187189437e37696",
         "type": "github"
       },
       "original": {

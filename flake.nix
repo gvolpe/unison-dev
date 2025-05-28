@@ -15,19 +15,19 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
-    unison-lang = {
+    unison-nix = {
       url = github:ceedubs/unison-nix;
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, unison-lang, ... }:
+  outputs = { nixpkgs, unison-nix, ... }:
     let
       system = "x86_64-linux";
 
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ unison-lang.overlay ];
+        overlays = [ unison-nix.overlay ];
       };
     in
     {
