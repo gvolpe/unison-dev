@@ -14,11 +14,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-
-    unison-nix = {
-      url = github:ceedubs/unison-nix;
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    unison-nix.url = github:ceedubs/unison-nix;
   };
 
   outputs = { nixpkgs, unison-nix, ... }:

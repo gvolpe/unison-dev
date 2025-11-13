@@ -456,7 +456,7 @@
     "nix": {
       "inputs": {
         "lowdown-src": "lowdown-src",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "nixpkgs-regression": "nixpkgs-regression"
       },
       "locked": {
@@ -651,6 +651,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1751274312,
+        "narHash": "sha256-/bVBlRpECLVzjV19t5KMdMFWSwKLtb5RyXdjz3LJT+g=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "50ab793786d9de88ee30ec4e4c24fb4236fc2674",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1657693803,
         "narHash": "sha256-G++2CJ9u0E7NNTAi9n5G8TdDmGJXcIjkJ3NF8cetQB8=",
         "owner": "NixOS",
@@ -726,25 +742,31 @@
           "flake-utils"
         ],
         "haskellNix": "haskellNix",
-        "nixpkgs-haskellNix": [
+        "nixpkgs": [
           "unison-nix",
           "unison",
           "haskellNix",
           "nixpkgs-unstable"
         ],
-        "nixpkgs-release": "nixpkgs-release"
+        "nixpkgs-release": "nixpkgs-release",
+        "systems": [
+          "unison-nix",
+          "unison",
+          "flake-utils",
+          "systems"
+        ]
       },
       "locked": {
-        "lastModified": 1758162287,
-        "narHash": "sha256-S4C0bXhgx2hN7sDhkSJUHJu/a0yHpu5EPA22UC5we+I=",
+        "lastModified": 1762796125,
+        "narHash": "sha256-KUmuXy73wKjxhu5JETKPHasOad0VfRj0cwxpjpE3KFw=",
         "owner": "unisonweb",
         "repo": "unison",
-        "rev": "2824fce433fe13855ab8fcbf2c2ebbe0c9a5ab4c",
+        "rev": "6e59c0a34ff0929dcdf2dc8e7ac5833b0f374455",
         "type": "github"
       },
       "original": {
         "owner": "unisonweb",
-        "ref": "release/0.5.48",
+        "ref": "release/0.5.50",
         "repo": "unison",
         "type": "github"
       }
@@ -753,17 +775,15 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs_2",
         "unison": "unison"
       },
       "locked": {
-        "lastModified": 1758814146,
-        "narHash": "sha256-ELtlAMfkifw/xepbo8pgGraqqepNxVYWiAzTEBhD+P0=",
+        "lastModified": 1763049299,
+        "narHash": "sha256-1QUPynuU9WKoauIqlcXqxcZT7FD1s7g3K2+0x0D4Fdw=",
         "owner": "ceedubs",
         "repo": "unison-nix",
-        "rev": "c2a06d9bf3cbc8bb6dfb039d1519ec6499f106e9",
+        "rev": "7d1d1a8e6eeeb44fde8321f9bc4787715a3e94c9",
         "type": "github"
       },
       "original": {
