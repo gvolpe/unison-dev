@@ -4,33 +4,31 @@
   nixConfig = {
     extra-substituters = [
       "https://cache.nixos.org"
-      "https://cache.garnix.io"
+      "https://unison.cachix.org"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+      "unison.cachix.org-1:i1DUFkisRPVOyLp/vblDsbsObmyCviq/zs6eRuzth3k="
     ];
   };
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    unison-nix.url = github:ceedubs/unison-nix;
+    nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
+    unison-nix.url = "github:ceedubs/unison-nix";
   };
 
   outputs = { nixpkgs, unison-nix, ... }:
     let
       system = "x86_64-linux";
-
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ unison-nix.overlay ];
-      };
+      pkgs = import nixpkgs { inherit system; };
     in
     {
-      devShells.${system}.default = pkgs.mkShell {
+      devShells.${system}.default = pkgs.mkShellNoCC {
         name = "unison-dev-shell";
-        buildInputs = with pkgs; [
-          unison-ucm
+
+        buildInputs = with unison-nix.packages.${system}; [
+          ucm-bin
+          ucm-desktop
         ];
       };
     };
